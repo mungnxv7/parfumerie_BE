@@ -33,7 +33,7 @@ const productController = {
     try {
       const addProduct = await Product.create(req.body);
       if (addProduct) {
-        res.status.json("Add product successfully");
+        res.status(200).json({ messege: "Add product successfully" });
       }
     } catch (err) {
       console.log(err);
