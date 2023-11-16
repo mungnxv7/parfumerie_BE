@@ -29,9 +29,12 @@ const productController = {
       console.log(err);
     }
   },
-  async pushProduct(req) {
+  async pushProduct(req, res) {
     try {
-      console.log(req.body);
+      const addProduct = await Product.create(req.body);
+      if (addProduct) {
+        res.status.json("Add product successfully");
+      }
     } catch (err) {
       console.log(err);
     }

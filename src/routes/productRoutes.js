@@ -6,6 +6,6 @@ routes.get("/", productController.getAllProduct);
 routes.get("/:id", productController.getProductDetail);
 routes.delete("/:id", productController.deleteProduct);
 // routes.get("/:id", productController.getAllProduct);
-// routes.get("/create", productController.pushProduct);
+routes.post("/", productController.pushProduct);
 
 export default routes;
