@@ -22,18 +22,33 @@ const productController = {
     try {
       const { id } = req.params;
       if (id) {
-        await Product.deleteOne({ _id: id });
-        res.send("Delete product successfully");
+        const result = await Product.deleteOne({ _id: id });
+        if (result) {
+          res.status(200).json({ messege: "Delete product successfully" });
+        }
       }
     } catch (err) {
       console.log(err);
     }
   },
-  async pushProduct(req, res) {
+  async postProduct(req, res) {
     try {
       const addProduct = await Product.create(req.body);
       if (addProduct) {
         res.status(200).json({ messege: "Add product successfully" });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  async putProduct(req, res) {
+    try {
+      const { id } = req.params;
+      if (id) {
+        const result = await Product.updateOne({ _id: id }, req.body);
+        if (result) {
+          res.status(200).json({ messege: "Update product successfully" });
+        }
       }
     } catch (err) {
       console.log(err);

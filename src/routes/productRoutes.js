@@ -5,7 +5,7 @@ const routes = express.Router();
 routes.get("/", productController.getAllProduct);
 routes.get("/:id", productController.getProductDetail);
 routes.delete("/:id", productController.deleteProduct);
-// routes.get("/:id", productController.getAllProduct);
-routes.post("/", productController.pushProduct);
+routes.post("/", productController.postProduct);
+routes.put("/:id", productController.putProduct);
 
 export default routes;
