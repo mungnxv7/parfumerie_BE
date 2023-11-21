@@ -9,7 +9,7 @@ const port = 3000;
 
 dotenv.config();
 
-const { API_LOCAL, PORT } = process.env;
+const { API_SERVER, PORT } = process.env;
 app.use(
   express.urlencoded({
     extended: true,
@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use("/products", routesProduct);
 app.use("/user", routesUser);
-connect(API_LOCAL);
+connect(API_SERVER);
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
