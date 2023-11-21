@@ -1,4 +1,5 @@
 import Product from "../models/productsModel.js";
+import { porductValidate } from "../validation/productValidate.js";
 
 const productController = {
   async getAllProduct(req, res) {
@@ -9,15 +10,24 @@ const productController = {
       console.log(err);
     }
   },
+
   async getProductDetail(req, res) {
     try {
       const { id } = req.params;
-      const product = await Product.findById(id);
+      const product = await Product.findOne({ _id: id });
       res.json(product);
     } catch (err) {
       console.log(err);
     }
   },
+
+  async getSameProduct(req, res) {
+    try {
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
   async deleteProduct(req, res) {
     try {
       const { id } = req.params;
@@ -31,24 +41,42 @@ const productController = {
       console.log(err);
     }
   },
+
   async postProduct(req, res) {
     try {
-      const addProduct = await Product.create(req.body);
-      if (addProduct) {
-        res.status(200).json({ messege: "Add product successfully" });
+      const { error } = porductValidate.validate(req.body);
+      if (!error) {
+        const addProduct = await Product.create(req.body);
+        if (addProduct) {
+          res.status(200).json({ messege: "Add product successfully" });
+        } else {
+          res.status(404).json({ messege: "Add Product failed" });
+        }
+      } else {
+        res
+          .status(404)
+          .json({ messege: error.details.map((mes) => mes.message) });
       }
     } catch (err) {
       console.log(err);
     }
   },
+
   async putProduct(req, res) {
     try {
       const { id } = req.params;
-      if (id) {
+      const { error } = req.body;
+      if (id || !error) {
         const result = await Product.updateOne({ _id: id }, req.body);
         if (result) {
           res.status(200).json({ messege: "Update product successfully" });
+        } else {
+          res.status(404).json({ messege: "Update product failed" });
         }
+      } else {
+        res
+          .status(404)
+          .json({ messege: error.details.map((mes) => mes.message) });
       }
     } catch (err) {
       console.log(err);

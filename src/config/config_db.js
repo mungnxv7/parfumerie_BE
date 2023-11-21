@@ -1,11 +1,8 @@
 import mongoose from "mongoose";
 
-async function connect() {
+async function connect(url_db) {
   try {
-    await mongoose.connect(
-      "mongodb+srv://munglolicon2002:munglolicon0@cluster0.vpgllqh.mongodb.net/react-typescript-data"
-      // "mongodb://127.0.0.1:27017/typescript"
-    );
+    await mongoose.connect(url_db);
     console.log("Connected database");
   } catch (err) {
     console.log(err);

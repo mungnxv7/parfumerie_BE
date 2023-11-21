@@ -1,10 +1,15 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import connect from "./src/config/config_db.js";
-import routes from "./src/routes/productRoutes.js";
+import routesProduct from "./src/routes/productRoutes.js";
+import routesUser from "./src/routes/userRoutes.js";
 const app = express();
 const port = 3000;
 
+dotenv.config();
+
+const { API_LOCAL, PORT } = process.env;
 app.use(
   express.urlencoded({
     extended: true,
@@ -13,9 +18,9 @@ app.use(
 app.use(cors());
 app.use(express.json());
 
-app.use("/products", routes);
-
-connect();
-app.listen(port, () => {
-  console.log(`Server is running on port http://localhost:${port}`);
+app.use("/products", routesProduct);
+app.use("/user", routesUser);
+connect(API_LOCAL);
+app.listen(PORT, () => {
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });
