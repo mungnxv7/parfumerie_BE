@@ -23,6 +23,9 @@ const productController = {
 
   async getSameProduct(req, res) {
     try {
+      const { category } = req.params;
+      const sameProducts = await Product.find({ "category._id": category });
+      res.json(sameProducts);
     } catch (err) {
       console.log(err);
     }

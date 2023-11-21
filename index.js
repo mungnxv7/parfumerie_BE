@@ -5,11 +5,10 @@ import connect from "./src/config/config_db.js";
 import routesProduct from "./src/routes/productRoutes.js";
 import routesUser from "./src/routes/userRoutes.js";
 const app = express();
-const port = 3000;
 
 dotenv.config();
 
-const { API_SERVER, PORT } = process.env;
+const { API_SERVER, API_LOCAL, PORT } = process.env;
 app.use(
   express.urlencoded({
     extended: true,

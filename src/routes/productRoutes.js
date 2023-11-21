@@ -9,6 +9,6 @@ routesProduct.get("/:id", productController.getProductDetail);
 routesProduct.delete("/:id", productController.deleteProduct);
 routesProduct.post("/", productController.postProduct);
 routesProduct.put("/:id", productController.putProduct);
-routesProduct.get("/same_product/:category");
+routesProduct.get("/same_product/:category", productController.getSameProduct);
 
 export default routesProduct;
