@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/userModel.js";
+import SchemaUser from "../validation/userValidate.js";
 
 dotenv.config();
 const { SECRET_CODE } = process.env;
@@ -10,8 +11,10 @@ const userController = {
   async getAllUsers(req, res) {
     try {
       const users = await User.find();
+      users.map((user) => {
+        user.password = undefined;
+      });
       res.json(users);
-      return;
     } catch (err) {
       res.status(404).json({ message: "Lỗi không thể lấy dữ liệu" });
     }
@@ -20,8 +23,8 @@ const userController = {
   async getUserDetail(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.id });
+      user.password = undefined;
       res.json(user);
-      return;
     } catch (error) {
       res.status(404).json({ message: "Lỗi không thể lấy dữ liệu" });
     }
@@ -35,11 +38,22 @@ const userController = {
           message: "Email đã được đăng kí",
         });
       }
+
+      const { error } = SchemaUser.validate(req.body);
+      if (error) {
+        console.log(error);
+        let messageError = [];
+        error.details.map((messError) => {
+          messageError.push(messError.message);
+        });
+        res.status(400).json(messageError);
+        return;
+      }
       const hashedPassword = await bcryptjs.hash(req.body.password, 10);
 
       const user = await User.create({ ...req.body, password: hashedPassword });
+      user.password = undefined;
       res.json({ message: "Đăng kí thành công", user });
-      return;
     } catch (error) {
       res.status(404).json({ message: "Đăng kí thất bại" });
     }
@@ -64,7 +78,6 @@ const userController = {
       res
         .status(200)
         .json({ message: "Đăng nhập thành công", isUser, accessToken });
-      return;
     } catch (error) {
       res.status(404).json({ message: "Đăng nhập thất bại" });
     }
@@ -73,10 +86,20 @@ const userController = {
   async updateUser(req, res) {
     try {
       const id = req.params.id;
+
       if (id) {
-        await User.updateOne({ _id: id }, req.body);
-        res.json({ message: "Cập nhật thông tin thành công" });
-        return;
+        const { error } = SchemaUser.validate(req.body);
+        if (error) {
+          let messageError = [];
+          error.details.map((messError) => {
+            messageError.push(messError.message);
+          });
+          res.status(400).json(messageError);
+          return;
+        }
+        const user = await User.updateOne({ _id: id }, req.body);
+        user.password = undefined;
+        res.json({ message: "Cập nhật thông tin thành công", ...user });
       }
     } catch (error) {
       res.status(404).json({ message: "Cập nhật thông tin thất bại" });
@@ -89,7 +112,6 @@ const userController = {
       if (id) {
         await User.deleteOne({ _id: id });
         res.json({ message: "Xóa thành công" });
-        return;
       }
     } catch (error) {
       res.status(404).json({ message: "Xóa thất bại" });

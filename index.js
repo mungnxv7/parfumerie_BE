@@ -19,7 +19,7 @@ app.use(express.json());
 
 app.use("/products", routesProduct);
 app.use("/user", routesUser);
-connect(API_SERVER);
+connect(API_LOCAL);
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });

@@ -19,4 +19,4 @@ export const porductValidate = Joi.object({
     "string.min": "Ảnh sản phẩm phải có ít nhất 1 kí tự",
     "string.max": "Ảnh sản phẩm không quá 255 ký tự",
   }),
-});
+}).options({ abortEarly: false });
