@@ -4,7 +4,7 @@ import { porductValidate } from "../validation/productValidate.js";
 const productController = {
   async getAllProduct(req, res) {
     try {
-      const products = await Product.find();
+      const products = await Product.find().populate("id_category");
       if (products) {
         res.json(products.map((product) => product.toObject()));
       } else {
@@ -18,7 +18,9 @@ const productController = {
   async getProductDetail(req, res) {
     try {
       const { id } = req.params;
-      const product = await Product.findOne({ _id: id });
+      const product = await Product.findOne({ _id: id }).populate(
+        "id_category"
+      );
       if (product) {
         res.json(product);
       } else {
@@ -68,12 +70,13 @@ const productController = {
         error.details.map((messError) => {
           messageError.push(messError.message);
           res.status(400).json(messageError);
-          return;
         });
+        return;
       }
-
       const result = await Product.create(req.body);
-      res.status(200).json({ message: "Thêm sản phẩm thành công", ...result });
+      res
+        .status(200)
+        .json({ message: "Thêm sản phẩm thành công", data: result._doc });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }

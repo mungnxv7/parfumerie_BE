@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connect from "./src/config/config_db.js";
 import routesProduct from "./src/routes/productRoutes.js";
 import routesUser from "./src/routes/userRoutes.js";
+import routesCategory from "./src/routes/categoryRoutes.js";
 const app = express();
 
 dotenv.config();
@@ -18,7 +19,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/products", routesProduct);
-app.use("/user", routesUser);
+app.use("/users", routesUser);
+app.use("/categories", routesCategory);
 connect(API_SERVER);
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);

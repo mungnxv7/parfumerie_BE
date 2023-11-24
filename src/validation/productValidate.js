@@ -10,9 +10,8 @@ export const porductValidate = Joi.object({
     "number.empty": "Giá tiền không dược bỏ trống !",
     "number.min": "Giá tiền phải lớn hơn 0",
   }),
-  category: Joi.string().required().max(255).min(1).messages({
-    "string.empty": "Danh mục sản phẩm không dược bỏ trống !",
-    "string.max": "Danh mục sản phẩm không quá 255 ký tự",
+  id_category: Joi.string().required().messages({
+    "string.empty": "Danh mục không dược bỏ trống !",
   }),
   image: Joi.string().required().max(255).min(1).messages({
     "string.empty": "Ảnh sản phẩm không dược bỏ trống !",
