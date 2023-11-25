@@ -15,33 +15,28 @@ const userController = {
         user.password = undefined;
       });
       res.json(users);
-    } catch (err) {
-      res.status(404).json({ message: "Lỗi không thể lấy dữ liệu" });
+    } catch (error) {
+      res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
   async getUserDetail(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.id });
-      user.password = undefined;
+      if (!user) {
+        res.status(404).json({ message: "Tài khoản không tồn tại" });
+        return;
+      }
       res.json(user);
     } catch (error) {
-      res.status(404).json({ message: "Lỗi không thể lấy dữ liệu" });
+      res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
   async userSignUp(req, res) {
     try {
-      const userExists = await User.findOne({ email: req.body.email });
-      if (userExists) {
-        res.status(400).json({
-          message: "Email đã được đăng kí",
-        });
-      }
-
       const { error } = SchemaUser.validate(req.body);
       if (error) {
-        console.log(error);
         let messageError = [];
         error.details.map((messError) => {
           messageError.push(messError.message);
@@ -49,13 +44,22 @@ const userController = {
         res.status(400).json(messageError);
         return;
       }
+
+      const userExists = await User.findOne({ email: req.body.email });
+      if (userExists) {
+        res.status(400).json({
+          message: "Email đã được đăng kí",
+        });
+        return;
+      }
+
       const hashedPassword = await bcryptjs.hash(req.body.password, 10);
 
       const user = await User.create({ ...req.body, password: hashedPassword });
       user.password = undefined;
-      res.json({ message: "Đăng kí thành công", user });
+      res.json({ message: "Đăng kí thành công" });
     } catch (error) {
-      res.status(404).json({ message: "Đăng kí thất bại" });
+      res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
@@ -66,20 +70,26 @@ const userController = {
 
       if (!isUser) {
         res.status(404).json({ message: "Tài khoản không tồn tại" });
+        return;
       }
 
-      const isMatch = bcryptjs.compare(user.password, isUser.password);
+      const isMatch = await bcryptjs.compare(user.password, isUser.password);
       if (!isMatch) {
-        res.status(404).json({ message: "Password không đúng" });
+        res.status(404).json({ message: "Email hoặc mật khẩu không đúng" });
+        return;
       }
 
       const accessToken = jwt.sign({ _id: isUser._id }, SECRET_CODE);
+      if (!accessToken) {
+        response.status(403).json({ message: "Tạo token thất bại" });
+        return;
+      }
       isUser.password = undefined;
       res
         .status(200)
         .json({ message: "Đăng nhập thành công", isUser, accessToken });
     } catch (error) {
-      res.status(404).json({ message: "Đăng nhập thất bại" });
+      res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
@@ -102,19 +112,21 @@ const userController = {
         res.json({ message: "Cập nhật thông tin thành công", ...user });
       }
     } catch (error) {
-      res.status(404).json({ message: "Cập nhật thông tin thất bại" });
+      res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
   async deleteUser(req, res) {
     try {
       const id = req.params.id;
-      if (id) {
-        await User.deleteOne({ _id: id });
-        res.json({ message: "Xóa thành công" });
+      if (!id) {
+        res.status(404).json({ message: "Xóa thất bại" });
+        return;
       }
+      await User.deleteOne({ _id: id });
+      res.json({ message: "Xóa thành công" });
     } catch (error) {
-      res.status(404).json({ message: "Xóa thất bại" });
+      res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 };
