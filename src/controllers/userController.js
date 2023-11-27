@@ -65,6 +65,15 @@ const userController = {
 
   async userSignIn(req, res) {
     try {
+      const { error } = SchemaUser.validate(req.body);
+      if (error) {
+        let messageError = [];
+        error.details.map((messError) => {
+          messageError.push(messError.message);
+        });
+        res.status(400).json(messageError);
+        return;
+      }
       const user = req.body;
       const isUser = await User.findOne({ email: user.email });
 
