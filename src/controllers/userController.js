@@ -2,7 +2,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/userModel.js";
-import SchemaUser from "../validation/userValidate.js";
+import { validateLogin, SchemaUser } from "../validation/userValidate.js";
 
 dotenv.config();
 const { SECRET_CODE } = process.env;
@@ -65,7 +65,7 @@ const userController = {
 
   async userSignIn(req, res) {
     try {
-      const { error } = SchemaUser.validate(req.body);
+      const { error } = validateLogin.validate(req.body);
       if (error) {
         let messageError = [];
         error.details.map((messError) => {
@@ -76,7 +76,8 @@ const userController = {
       }
       const user = req.body;
       const isUser = await User.findOne({ email: user.email });
-
+      console.log(isUser);
+      console.log(user.password);
       if (!isUser) {
         res.status(404).json({ message: "Tài khoản không tồn tại" });
         return;
@@ -116,7 +117,12 @@ const userController = {
           res.status(400).json(messageError);
           return;
         }
-        const user = await User.updateOne({ _id: id }, req.body);
+        const hashedPassword = await bcryptjs.hash(req.body.password, 10);
+
+        const user = await User.updateOne(
+          { _id: id },
+          { ...req.body, password: hashedPassword }
+        );
         user.password = undefined;
         res.json({ message: "Cập nhật thông tin thành công", ...user });
       }
