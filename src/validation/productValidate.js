@@ -13,8 +13,8 @@ export const porductValidate = Joi.object({
   id_category: Joi.string().required().messages({
     "string.empty": "Danh mục không dược bỏ trống !",
   }),
-  image: Joi.string().required().messages({
+  image: Joi.object().required().messages({
     "any.required": "Vui lòng cung cấp ảnh sản phẩm.",
-    "string.empty": "Ảnh sản phẩm không dược bỏ trống !",
+    "object.base": "Ảnh sản phẩm không dược bỏ trống !",
   }),
 }).options({ abortEarly: false });

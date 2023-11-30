@@ -6,7 +6,7 @@ const routesUser = express.Router();
 routesUser.get("/", userController.getAllUsers);
 routesUser.get("/:id", userController.getUserDetail);
 routesUser.post("/signin", userController.userSignIn);
-routesUser.post("/signup", checkPermissionUser, userController.userSignUp);
+routesUser.post("/signup", userController.userSignUp);
 routesUser.put("/:id", checkPermissionUser, userController.updateUser);
 routesUser.delete("/:id", checkPermissionUser, userController.deleteUser);
 

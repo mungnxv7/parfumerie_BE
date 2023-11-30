@@ -35,7 +35,7 @@ const productController = {
   async getSameProduct(req, res) {
     try {
       const { category } = req.params;
-      const sameProducts = await Product.find({ "category._id": category });
+      const sameProducts = await Product.find({ id_category: category });
       if (sameProducts) {
         res.json(sameProducts);
       } else {
@@ -50,13 +50,10 @@ const productController = {
     try {
       const { id } = req.params;
       if (id) {
-        const result = await Product.deleteOne({ _id: id });
-        if (result) {
-          res.status(200).json({ messege: "Xóa sản phẩm thành công" });
-        } else {
-          res.status(400).json({ messege: "Xóa sản phẩm thất bại" });
-          return;
-        }
+        await Product.deleteOne({ _id: id });
+        const product = await Product.findOne({ _id: id });
+        await cloudinary.uploader.destroy(product.image.filename);
+        res.status(200).json({ message: "Xóa sản phẩm thành công" });
       }
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
@@ -65,9 +62,11 @@ const productController = {
 
   async postProduct(req, res) {
     try {
-      const data = { ...req.body, image: req.file?.path };
+      const data = {
+        ...req.body,
+        image: { filename: req.file.filename, path: req.file.path },
+      };
       const { error } = porductValidate.validate(data);
-      console.log(data);
       if (error) {
         if (req.file) {
           await cloudinary.uploader.destroy(req.file.filename);
@@ -90,17 +89,22 @@ const productController = {
 
   async putProduct(req, res) {
     try {
-      const data = {};
+      const { id } = req.params;
+      let data = {};
+      console.log("file", req.file);
       if (req.file) {
-        data = { ...req.body, image: req.file?.path };
+        const product = await Product.findOne({ _id: id });
+        await cloudinary.uploader.destroy(product.image.filename);
+        data = {
+          ...req.body,
+          image: { filename: req.file.filename, path: req.file.path },
+        };
       } else {
-        data = { ...req.body };
+        data = req.body;
       }
+      console.log("data", data);
       const { error } = porductValidate.validate(data);
       if (error) {
-        if (req.file) {
-          await cloudinary.uploader.destroy(req.file.filename);
-        }
         let messageError = [];
         error.details.map((messError) => {
           messageError.push(messError.message);
@@ -108,10 +112,8 @@ const productController = {
         });
         return;
       }
-      const result = await Product.updateOne({ _id: id }, req.body);
-      res
-        .status(200)
-        .json({ messege: "Cập nhật sản phẩm thành công", ...result });
+      await Product.updateOne({ _id: id }, data);
+      res.status(200).json({ message: "Cập nhật sản phẩm thành công" });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }

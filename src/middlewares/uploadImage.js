@@ -4,9 +4,9 @@ import cloudinary from "../config/cloudinaryConfig.js";
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
+  allowedFormats: ["jpg,png,jpeg"],
   params: {
     folder: "up_load",
-    format: "jpg",
   },
 });
 const upload = multer({ storage: storage });

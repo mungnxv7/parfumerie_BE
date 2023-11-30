@@ -27,6 +27,7 @@ const userController = {
         res.status(404).json({ message: "Tài khoản không tồn tại" });
         return;
       }
+      user.password = undefined;
       res.json(user);
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
@@ -35,6 +36,7 @@ const userController = {
 
   async userSignUp(req, res) {
     try {
+      console.log(req.body);
       const { error } = SchemaUser.validate(req.body);
       if (error) {
         let messageError = [];
@@ -76,7 +78,6 @@ const userController = {
       }
       const user = req.body;
       const isUser = await User.findOne({ email: user.email });
-      console.log(isUser);
       console.log(user.password);
       if (!isUser) {
         res.status(404).json({ message: "Tài khoản không tồn tại" });
