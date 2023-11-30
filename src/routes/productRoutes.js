@@ -1,6 +1,7 @@
 import express from "express";
 import productController from "../controllers/productController.js";
 import { checkPermissionUser } from "../middlewares/checkPermission.js";
+import upload from "../middlewares/uploadImage.js";
 //get /all
 // post products/ add
 const routesProduct = express.Router();
@@ -11,8 +12,18 @@ routesProduct.delete(
   checkPermissionUser,
   productController.deleteProduct
 );
-routesProduct.post("/", checkPermissionUser, productController.postProduct);
-routesProduct.put("/:id", checkPermissionUser, productController.putProduct);
+routesProduct.post(
+  "/",
+  checkPermissionUser,
+  upload.single("image"),
+  productController.postProduct
+);
+routesProduct.put(
+  "/:id",
+  checkPermissionUser,
+  upload.single("image"),
+  productController.putProduct
+);
 routesProduct.get("/same_product/:category", productController.getSameProduct);
 
 export default routesProduct;

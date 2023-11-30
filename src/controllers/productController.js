@@ -1,3 +1,4 @@
+import cloudinary from "../config/cloudinaryConfig.js";
 import Product from "../models/productsModel.js";
 import { porductValidate } from "../validation/productValidate.js";
 
@@ -64,8 +65,13 @@ const productController = {
 
   async postProduct(req, res) {
     try {
-      const { error } = porductValidate.validate(req.body);
+      const data = { ...req.body, image: req.file?.path };
+      const { error } = porductValidate.validate(data);
+      console.log(data);
       if (error) {
+        if (req.file) {
+          await cloudinary.uploader.destroy(req.file.filename);
+        }
         let messageError = [];
         error.details.map((messError) => {
           messageError.push(messError.message);
@@ -73,7 +79,7 @@ const productController = {
         });
         return;
       }
-      const result = await Product.create(req.body);
+      const result = await Product.create(data);
       res
         .status(200)
         .json({ message: "Thêm sản phẩm thành công", data: result._doc });
@@ -84,15 +90,23 @@ const productController = {
 
   async putProduct(req, res) {
     try {
-      const { id } = req.params;
-      const { error } = req.body;
+      const data = {};
+      if (req.file) {
+        data = { ...req.body, image: req.file?.path };
+      } else {
+        data = { ...req.body };
+      }
+      const { error } = porductValidate.validate(data);
       if (error) {
+        if (req.file) {
+          await cloudinary.uploader.destroy(req.file.filename);
+        }
         let messageError = [];
         error.details.map((messError) => {
           messageError.push(messError.message);
           res.status(400).json(messageError);
-          return;
         });
+        return;
       }
       const result = await Product.updateOne({ _id: id }, req.body);
       res
