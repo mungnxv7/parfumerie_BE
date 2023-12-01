@@ -50,9 +50,9 @@ const productController = {
     try {
       const { id } = req.params;
       if (id) {
-        await Product.deleteOne({ _id: id });
         const product = await Product.findOne({ _id: id });
         await cloudinary.uploader.destroy(product.image.filename);
+        await Product.deleteOne({ _id: id });
         res.status(200).json({ message: "Xóa sản phẩm thành công" });
       }
     } catch (error) {
