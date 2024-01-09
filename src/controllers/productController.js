@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import cloudinary from "../config/cloudinaryConfig.js";
 import Product from "../models/productsModel.js";
 import { porductValidate } from "../validation/productValidate.js";
@@ -78,7 +79,8 @@ const productController = {
         });
         return;
       }
-      const result = await Product.create(data);
+      const slug = slugify(data.nameProduct);
+      const result = await Product.create({ ...data, slug: slug });
       res
         .status(200)
         .json({ message: "Thêm sản phẩm thành công", data: result._doc });

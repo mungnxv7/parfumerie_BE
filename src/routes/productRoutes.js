@@ -12,12 +12,8 @@ routesProduct.delete(
   checkPermissionUser,
   productController.deleteProduct
 );
-routesProduct.post(
-  "/",
-  checkPermissionUser,
-  upload.single("image"),
-  productController.postProduct
-);
+// upload.single("image"),
+routesProduct.post("/", productController.postProduct);
 routesProduct.put(
   "/:id",
   checkPermissionUser,
