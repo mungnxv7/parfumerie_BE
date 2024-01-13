@@ -13,7 +13,9 @@ const hotelsModel = new Schema(
       street_address: { type: String, required: true },
     },
     slug: { type: String },
-    hotelImage: { type: String, required: true },
+    hotelImage: {
+      path: { type: String, required: true },
+    },
     ranking: { type: Number, required: true },
 
     descreiptionHotel: { type: String, require: true },
