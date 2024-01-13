@@ -11,8 +11,8 @@ routesHotels.get("/id/:id");
 routesHotels.get("/limit/:limit");
 routesHotels.delete("/:id", hotelsController.deleteHotel);
 // upload.single("image"),
-routesHotels.post("/");
-routesHotels.put("/:id", checkPermissionUser, upload.single("image"));
+routesHotels.post("/", hotelsController.postHotel);
+routesHotels.put("/:id", hotelsController.putHotel);
 routesHotels.get("/same_product/:category");
 
 export default routesHotels;

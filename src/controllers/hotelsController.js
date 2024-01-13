@@ -1,7 +1,8 @@
 import slugify from "slugify";
 import cloudinary from "../config/cloudinaryConfig.js";
-import { porductValidate } from "../validation/productValidate.js";
+
 import Hotels from "../models/hotelsModel.js";
+import { hotelValidate } from "../validation/hotelValidate.js";
 
 const hotelsController = {
   async getAllHotels(req, res) {
@@ -71,64 +72,63 @@ const hotelsController = {
     }
   },
 
-  // async postProduct(req, res) {
-  //   try {
-  //     const data = {
-  //       ...req.body,
-  //       image: { filename: req.file.filename, path: req.file.path },
-  //     };
-  //     const { error } = porductValidate.validate(data);
-  //     if (error) {
-  //       if (req.file) {
-  //         await cloudinary.uploader.destroy(req.file.filename);
-  //       }
-  //       let messageError = [];
-  //       error.details.map((messError) => {
-  //         messageError.push(messError.message);
-  //         res.status(400).json(messageError);
-  //       });
-  //       return;
-  //     }
-  //     const slug = slugify(data.nameProduct);
-  //     const result = await Product.create({ ...data, slug: slug });
-  //     res
-  //       .status(200)
-  //       .json({ message: "Thêm sản phẩm thành công", data: result._doc });
-  //   } catch (error) {
-  //     res.status(500).send("Lỗi máy chủ: " + error.message);
-  //   }
-  // },
+  async postHotel(req, res) {
+    try {
+      const data = req.body;
+      // const data = {
+      //   ...req.body,
+      //   image: { filename: req.file.filename, path: req.file.path },
+      // };
+      const { error } = hotelValidate.validate(data);
+      if (error) {
+        // if (req.file) {
+        //   await cloudinary.uploader.destroy(req.file.filename);
+        // }
+        let messageError = [];
+        error.details.map((messError) => {
+          messageError.push(messError.message);
+          res.status(400).json(messageError);
+        });
+        return;
+      }
+      const slug = slugify(data.hotelName);
+      const result = await Hotels.create({ ...data, slug: slug });
+      res
+        .status(200)
+        .json({ message: "Thêm sản phẩm thành công", data: result._doc });
+    } catch (error) {
+      res.status(500).send("Lỗi máy chủ: " + error.message);
+    }
+  },
 
-  // async putProduct(req, res) {
-  //   try {
-  //     const { id } = req.params;
-  //     let data = {};
-  //     console.log("file", req.file);
-  //     if (req.file) {
-  //       const product = await Product.findOne({ _id: id });
-  //       await cloudinary.uploader.destroy(product.image.filename);
-  //       data = {
-  //         ...req.body,
-  //         image: { filename: req.file.filename, path: req.file.path },
-  //       };
-  //     } else {
-  //       data = req.body;
-  //     }
-  //     console.log("data", data);
-  //     const { error } = porductValidate.validate(data);
-  //     if (error) {
-  //       let messageError = [];
-  //       error.details.map((messError) => {
-  //         messageError.push(messError.message);
-  //         res.status(400).json(messageError);
-  //       });
-  //       return;
-  //     }
-  //     await Product.updateOne({ _id: id }, data);
-  //     res.status(200).json({ message: "Cập nhật sản phẩm thành công" });
-  //   } catch (error) {
-  //     res.status(500).send("Lỗi máy chủ: " + error.message);
-  //   }
-  // },
+  async putHotel(req, res) {
+    try {
+      const { id } = req.params;
+      const data = req.body;
+      // if (req.file) {
+      //   const product = await Product.findOne({ _id: id });
+      //   await cloudinary.uploader.destroy(product.image.filename);
+      //   data = {
+      //     ...req.body,
+      //     image: { filename: req.file.filename, path: req.file.path },
+      //   };
+      // } else {
+      //   data = req.body;
+      // }
+      const { error } = porductValidate.validate(data);
+      if (error) {
+        let messageError = [];
+        error.details.map((messError) => {
+          messageError.push(messError.message);
+          res.status(400).json(messageError);
+        });
+        return;
+      }
+      await Hotels.updateOne({ _id: id }, data);
+      res.status(200).json({ message: "Cập nhật sản phẩm thành công" });
+    } catch (error) {
+      res.status(500).send("Lỗi máy chủ: " + error.message);
+    }
+  },
 };
 export default hotelsController;
