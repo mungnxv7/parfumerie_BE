@@ -9,7 +9,7 @@ const routesHotels = express.Router();
 routesHotels.get("/", hotelsController.getAllHotels);
 routesHotels.get("/id/:id");
 routesHotels.get("/limit/:limit");
-routesHotels.delete("/:id", checkPermissionUser);
+routesHotels.delete("/:id", hotelsController.deleteHotel);
 // upload.single("image"),
 routesHotels.post("/");
 routesHotels.put("/:id", checkPermissionUser, upload.single("image"));

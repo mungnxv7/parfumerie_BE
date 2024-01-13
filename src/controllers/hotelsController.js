@@ -57,19 +57,19 @@ const hotelsController = {
   //   }
   // },
 
-  // async deleteProduct(req, res) {
-  //   try {
-  //     const { id } = req.params;
-  //     if (id) {
-  //       const product = await Product.findOne({ _id: id });
-  //       await cloudinary.uploader.destroy(product.image.filename);
-  //       await Product.deleteOne({ _id: id });
-  //       res.status(200).json({ message: "Xóa sản phẩm thành công" });
-  //     }
-  //   } catch (error) {
-  //     res.status(500).send("Lỗi máy chủ: " + error.message);
-  //   }
-  // },
+  async deleteHotel(req, res) {
+    try {
+      const { id } = req.params;
+      if (id) {
+        // const product = await Hotels.findOne({ _id: id });
+        // await cloudinary.uploader.destroy(product.image.filename);
+        await Hotels.deleteOne({ _id: id });
+        res.status(200).json({ message: "Xóa sản phẩm thành công" });
+      }
+    } catch (error) {
+      res.status(500).send("Lỗi máy chủ: " + error.message);
+    }
+  },
 
   // async postProduct(req, res) {
   //   try {
