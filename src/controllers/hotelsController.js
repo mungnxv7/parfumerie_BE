@@ -7,42 +7,27 @@ import { hotelValidate } from "../validation/hotelValidate.js";
 const hotelsController = {
   async getAllHotels(req, res) {
     try {
-      const result = await Hotels.find();
-      if (result) {
-        res.json(result);
+      const hotels = await Hotels.find();
+      if (hotels) {
+        res.status(200).json(hotels);
       }
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
-  // async getProductsLimit(req, res) {
-  //   try {
-  //     const limit = req.params.limit;
-  //     const products = await Product.find().limit(limit);
-  //     if (products) {
-  //       res.json(products.map((product) => product.toObject()));
-  //     } else {
-  //       res.status(404).json({ message: "Lỗi lấy dữ liệu từ máy chủ" });
-  //     }
-  //   } catch (error) {
-  //     res.status(500).send("Lỗi máy chủ: " + error.message);
-  //   }
-  // },
-  // async getProductDetail(req, res) {
-  //   try {
-  //     const { id } = req.params;
-  //     const product = await Product.findOne({ _id: id }).populate(
-  //       "id_category"
-  //     );
-  //     if (product) {
-  //       res.json(product);
-  //     } else {
-  //       res.status(404).json({ message: "Lỗi lấy dữ liệu từ máy chủ" });
-  //     }
-  //   } catch (error) {
-  //     res.status(500).send("Lỗi máy chủ: " + error.message);
-  //   }
-  // },
+  async getHotelDetail(req, res) {
+    try {
+      const { id } = req.params;
+      const hotel = await Hotels.findOne({ _id: id });
+      if (hotel) {
+        res.status(200).json(hotel);
+      } else {
+        res.status(404).json({ message: "Lỗi lấy dữ liệu từ máy chủ" });
+      }
+    } catch (error) {
+      res.status(500).send("Lỗi máy chủ: " + error.message);
+    }
+  },
 
   // async getSameProduct(req, res) {
   //   try {
