@@ -7,8 +7,7 @@ import hotelsController from "../controllers/hotelsController.js";
 // post products/ add
 const routesHotels = express.Router();
 routesHotels.get("/", hotelsController.getAllHotels);
-routesHotels.get("/id/:id");
-routesHotels.get("/limit/:limit");
+routesHotels.get("/:id", hotelsController.getHotelDetail);
 routesHotels.delete("/:id", hotelsController.deleteHotel);
 // upload.single("image"),
 routesHotels.post("/", hotelsController.postHotel);
