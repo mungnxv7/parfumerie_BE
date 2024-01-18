@@ -76,7 +76,12 @@ const hotelsController = {
         });
         return;
       }
-      const slug = slugify(data.hotelName);
+
+      const hotelExists = await Hotels.find({ hotelName: data.hotelName });
+      if (hotelExists) {
+        return res.status(400).json({ message: "Khách sạn đã tồn tại" });
+      }
+      const slug = slugify(data.hotelName, { lower: true });
       const result = await Hotels.create({ ...data, slug: slug });
       res
         .status(200)
@@ -89,6 +94,7 @@ const hotelsController = {
   async putHotel(req, res) {
     try {
       const { id } = req.params;
+
       const data = req.body;
       // if (req.file) {
       //   const product = await Product.findOne({ _id: id });
@@ -109,6 +115,15 @@ const hotelsController = {
         });
         return;
       }
+      const hotelExists = await Hotels.find({
+        hotelName: data.hotelName,
+        _id: { $ne: id },
+      });
+      if (hotelExists != "") {
+        return res.status(400).json({ message: "Khách sạn đã tồn tại" });
+      }
+      data.slug = slugify(data.hotelName, { lower: true });
+      res.json(data);
       await Hotels.updateOne({ _id: id }, data);
       res.status(200).json({ message: "Cập nhật sản phẩm thành công" });
     } catch (error) {

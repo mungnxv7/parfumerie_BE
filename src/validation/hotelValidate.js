@@ -10,15 +10,30 @@ export const hotelValidate = Joi.object({
     "string.empty": "Kiểu khách sạn không được bỏ trống !",
   }),
   address: {
-    province: Joi.string().required().messages({
-      "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
-    }),
-    district: Joi.string().required().messages({
-      "string.empty": "Quận / huyện không được bỏ trống !",
-    }),
-    ward: Joi.string().required().messages({
-      "string.empty": "Phường / xã không được bỏ trống !",
-    }),
+    province: {
+      code: Joi.number().required().messages({
+        "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
+      }),
+      name: Joi.string().required().messages({
+        "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
+      }),
+    },
+    district: {
+      code: Joi.number().required().messages({
+        "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
+      }),
+      name: Joi.string().required().messages({
+        "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
+      }),
+    },
+    ward: {
+      code: Joi.number().required().messages({
+        "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
+      }),
+      name: Joi.string().required().messages({
+        "string.empty": "Thành phố / tỉnh không dược bỏ trống !",
+      }),
+    },
     street_address: Joi.string().required().messages({
       "string.empty": "số nhà / đường không được bỏ trống !",
     }),
