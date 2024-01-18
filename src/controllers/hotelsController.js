@@ -77,10 +77,13 @@ const hotelsController = {
         return;
       }
 
-      const hotelExists = await Hotels.find({ hotelName: data.hotelName });
+      const hotelExists = await Hotels.findOne({ hotelName: data.hotelName });
       if (hotelExists) {
-        return res.status(400).json({ message: "Khách sạn đã tồn tại" });
+        return res
+          .status(400)
+          .json({ message: "Khách sạn đã tồn tại", hotelExists });
       }
+
       const slug = slugify(data.hotelName, { lower: true });
       const result = await Hotels.create({ ...data, slug: slug });
       res
