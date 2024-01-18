@@ -22,7 +22,7 @@ app.use("/sub_category", routesSub_category);
 app.use("/hotels", routesHotels);
 app.use("/users", routesUser);
 app.use("/categories", routesCategory);
-connect(API_SERVER);
+connect(API_LOCAL);
 app.listen(PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
