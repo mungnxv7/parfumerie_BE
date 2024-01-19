@@ -118,7 +118,6 @@ const userController = {
           return;
         }
         const hashedPassword = await bcryptjs.hash(req.body.password, 10);
-
         const user = await User.updateOne(
           { _id: id },
           { ...req.body, password: hashedPassword }
