@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/sub_category", routesSub_category);
 app.use("/hotels", routesHotels);
-app.use("/users", routesUser);
+app.use("/auth", routesUser);
 app.use("/categories", routesCategory);
 connect(API_SERVER);
 app.listen(PORT, () => {

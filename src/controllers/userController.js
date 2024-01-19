@@ -14,7 +14,7 @@ const userController = {
       users.map((user) => {
         user.password = undefined;
       });
-      res.json(users);
+      res.status(200).json(users);
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
@@ -28,15 +28,14 @@ const userController = {
         return;
       }
       user.password = undefined;
-      res.json(user);
+      res.status(200).json(user);
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
-  async userSignUp(req, res) {
+  async register(req, res) {
     try {
-      console.log(req.body);
       const { error } = SchemaUser.validate(req.body);
       if (error) {
         let messageError = [];
@@ -59,13 +58,13 @@ const userController = {
 
       const user = await User.create({ ...req.body, password: hashedPassword });
       user.password = undefined;
-      res.json({ message: "Đăng kí thành công" });
+      res.status(200).json({ message: "Đăng kí thành công" });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
-  async userSignIn(req, res) {
+  async login(req, res) {
     try {
       const { error } = validateLogin.validate(req.body);
       if (error) {
@@ -98,7 +97,7 @@ const userController = {
       isUser.password = undefined;
       res
         .status(200)
-        .json({ message: "Đăng nhập thành công", isUser, accessToken });
+        .json({ message: "Đăng nhập thành công", user: isUser, accessToken });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
