@@ -8,17 +8,11 @@ const SchemaUser = Joi.object({
     "string.empty": "Email không được bỏ trống",
     "string.email": "Email không đúng định dạng",
   }),
-  password: Joi.string()
-    .pattern(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{6,}$/)
-    .min(6)
-    .max(20)
-    .required()
-    .messages({
-      "string.pattern.base": "Mật khẩu phải có số và chữ in hoa",
-      "string.empty": "Mật khẩu không được bỏ trống",
-      "string.min": "Mật khẩu phải từ 6 ký tự trở lên",
-      "string.max": "Mật khẩu không quá 20 ký tự",
-    }),
+  password: Joi.string().min(6).max(20).required().messages({
+    "string.empty": "Mật khẩu không được bỏ trống",
+    "string.min": "Mật khẩu phải từ 6 ký tự trở lên",
+    "string.max": "Mật khẩu không quá 20 ký tự",
+  }),
   role: Joi.string().required().messages({
     "string.empty": "Role không được bỏ trống",
   }),
