@@ -109,7 +109,7 @@ const hotelsController = {
       // } else {
       //   data = req.body;
       // }
-      const { error } = porductValidate.validate(data);
+      const { error } = hotelValidate.validate(data);
       if (error) {
         let messageError = [];
         error.details.map((messError) => {
