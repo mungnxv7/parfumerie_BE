@@ -8,9 +8,9 @@ const hotelsModel = new Schema(
     hotelName: { type: String, required: true },
     hotelType: { type: String, required: true },
     address: {
-      province: { type: number, required: true },
-      district: { type: number, required: true },
-      ward: { type: number, required: true },
+      province: { type: Number, required: true },
+      district: { type: Number, required: true },
+      ward: { type: Number, required: true },
       street_address: { type: String, required: true },
     },
     slug: { type: String },
