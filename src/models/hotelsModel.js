@@ -1,3 +1,4 @@
+import { number } from "joi";
 import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
@@ -7,18 +8,9 @@ const hotelsModel = new Schema(
     hotelName: { type: String, required: true },
     hotelType: { type: String, required: true },
     address: {
-      province: {
-        code: { type: Number, required: true },
-        name: { type: String, required: true },
-      },
-      district: {
-        code: { type: Number, required: true },
-        name: { type: String, required: true },
-      },
-      ward: {
-        code: { type: Number, required: true },
-        name: { type: String, required: true },
-      },
+      province: { type: number, required: true },
+      district: { type: number, required: true },
+      ward: { type: number, required: true },
       street_address: { type: String, required: true },
     },
     slug: { type: String },
