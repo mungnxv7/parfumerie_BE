@@ -18,6 +18,19 @@ const SchemaUser = Joi.object({
   }),
 }).options({ abortEarly: false });
 
+const updateUser = Joi.object({
+  name: Joi.string().required().messages({
+    "string.empty": "Tên không được bỏ trống",
+  }),
+  email: Joi.string().email().required().messages({
+    "string.empty": "Email không được bỏ trống",
+    "string.email": "Email không đúng định dạng",
+  }),
+  role: Joi.string().required().messages({
+    "string.empty": "Role không được bỏ trống",
+  }),
+}).options({ abortEarly: false });
+
 const validateLogin = Joi.object({
   email: Joi.string().required().messages({
     "string.empty": "Email không được để trống",
@@ -26,4 +39,4 @@ const validateLogin = Joi.object({
     "string.empty": "Password không được để trống",
   }),
 });
-export { SchemaUser, validateLogin };
+export { SchemaUser, validateLogin, updateUser };

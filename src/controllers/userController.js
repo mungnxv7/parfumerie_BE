@@ -2,7 +2,11 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import User from "../models/userModel.js";
-import { validateLogin, SchemaUser } from "../validation/userValidate.js";
+import {
+  validateLogin,
+  SchemaUser,
+  updateUser,
+} from "../validation/userValidate.js";
 
 dotenv.config();
 const { SECRET_CODE } = process.env;
@@ -108,7 +112,7 @@ const userController = {
       const id = req.params.id;
 
       if (id) {
-        const { error } = SchemaUser.validate(req.body);
+        const { error } = updateUser.validate(req.body);
         if (error) {
           let messageError = [];
           error.details.map((messError) => {
