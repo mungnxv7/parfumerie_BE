@@ -7,7 +7,7 @@ routesUser.get("/", userController.getAllUsers);
 routesUser.get("/:id", userController.getUserDetail);
 routesUser.post("/login", userController.login);
 routesUser.post("/register", userController.register);
-routesUser.put("/:id", checkPermissionUser, userController.updateUser);
+routesUser.patch("/:id", checkPermissionUser, userController.updateUser);
 routesUser.delete("/:id", checkPermissionUser, userController.deleteUser);
 
 export default routesUser;
