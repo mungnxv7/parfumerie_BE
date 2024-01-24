@@ -7,7 +7,7 @@ const userModel = new Schema(
     password: { type: String, require: true, minLength: 6 },
     role: { type: String, require: true },
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 );
 
 const User = mongoose.model("User", userModel);
