@@ -121,13 +121,8 @@ const userController = {
           res.status(400).json(messageError);
           return;
         }
-        const hashedPassword = await bcryptjs.hash(req.body.password, 10);
-        const user = await User.updateOne(
-          { _id: id },
-          { ...req.body, password: hashedPassword }
-        );
-        user.password = undefined;
-        res.json({ message: "Cập nhật thông tin thành công", ...user });
+        const user = await User.updateOne({ _id: id }, req.body);
+        res.json({ message: "Cập nhật thông tin thành công" });
       }
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
