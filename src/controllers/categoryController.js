@@ -33,7 +33,7 @@ const categoryController = {
       if (categoriesExists) {
         return res.status(400).json({ message: "Khách sạn đã tồn tại" });
       }
-      const slug = slugify(data.hotelName, { lower: true });
+      const slug = slugify(data.name, { lower: true });
       const result = await Category.create({ ...data, slug: slug });
       res
         .status(200)
@@ -58,7 +58,7 @@ const categoryController = {
       if (categoriesExists != "") {
         return res.status(400).json({ message: "Khách sạn đã tồn tại" });
       }
-      const slug = slugify(data.hotelName, { lower: true });
+      const slug = slugify(data.name, { lower: true });
       await Category.updateOne({ _id: id }, { ...data, slug: slug });
       res.status(200).json({ message: "Cập nhật thành công" });
     } catch (error) {
