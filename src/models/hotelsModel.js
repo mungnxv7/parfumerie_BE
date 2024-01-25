@@ -5,7 +5,10 @@ const Schema = mongoose.Schema;
 const hotelsModel = new Schema(
   {
     hotelName: { type: String, required: true },
-    hotelType: { type: String, required: true },
+    hotelType: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "categories",
+    },
     address: {
       province: { type: Number, required: true },
       district: { type: Number, required: true },
