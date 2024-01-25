@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import Category from "../models/categoryModel.js";
 import categoryValidate from "../validation/categoryValidate.js";
 const categoryController = {
@@ -28,7 +29,12 @@ const categoryController = {
         res.status(400).json({ message: error.message });
         return;
       }
-      const result = await Category.create(data);
+      const categoriesExists = await Category.findOne({ name: data.name });
+      if (categoriesExists) {
+        return res.status(400).json({ message: "Khách sạn đã tồn tại" });
+      }
+      const slug = slugify(data.hotelName, { lower: true });
+      const result = await Category.create({ ...data, slug: slug });
       res
         .status(200)
         .json({ message: "Thêm danh mục thành công", data: result });
@@ -45,7 +51,15 @@ const categoryController = {
         res.status(400).json({ message: error.message });
         return;
       }
-      await Category.updateOne({ _id: id }, data);
+      const categoriesExists = await Category.find({
+        name: data.name,
+        _id: { $ne: id },
+      });
+      if (categoriesExists != "") {
+        return res.status(400).json({ message: "Khách sạn đã tồn tại" });
+      }
+      const slug = slugify(data.hotelName, { lower: true });
+      await Category.updateOne({ _id: id }, { ...data, slug: slug });
       res.status(200).json({ message: "Cập nhật thành công" });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);

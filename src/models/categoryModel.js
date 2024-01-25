@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 const categoryModel = new Schema(
   {
-    nameCategory: { type: String, required: true },
+    name: { type: String, required: true },
+    slug: { type: String },
   },
   { versionKey: false, timestamps: true }
 );
