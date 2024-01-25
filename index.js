@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import connect from "./src/config/config_db.js";
 import routesUser from "./src/routes/userRoutes.js";
 import routesCategory from "./src/routes/categoryRoutes.js";
-import routesSub_category from "./src/routes/sub_categoryRoutes.js";
 import routesHotels from "./src/routes/hotelsRoutes.js";
 const app = express();
 
@@ -18,7 +17,6 @@ app.use(
 );
 app.use(cors());
 app.use(express.json());
-app.use("/sub_category", routesSub_category);
 app.use("/hotels", routesHotels);
 app.use("/auth", routesUser);
 app.use("/categories", routesCategory);
