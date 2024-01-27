@@ -7,9 +7,22 @@ import { hotelValidate } from "../validation/hotelValidate.js";
 const hotelsController = {
   async getAllHotels(req, res) {
     try {
-      const hotels = await Hotels.find();
-      if (hotels) {
-        res.status(200).json(hotels);
+      const {
+        page = 1,
+        limit = "5",
+        sort = "createdAt",
+        order = "asc",
+      } = req.query;
+      const option = {
+        page: page,
+        limit: limit,
+        sort: { [sort]: order === "asc" ? 1 : -1 },
+      };
+      const hotels = await Hotels.paginate({}, option);
+      if (hotels.docs) {
+        return res.status(200).json(hotels);
+      } else {
+        return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
       }
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
@@ -29,19 +42,24 @@ const hotelsController = {
     }
   },
 
-  // async getSameProduct(req, res) {
-  //   try {
-  //     const { category } = req.params;
-  //     const sameProducts = await Product.find({ id_category: category });
-  //     if (sameProducts) {
-  //       res.json(sameProducts);
-  //     } else {
-  //       res.status(404).json({ message: "Lỗi lấy dữ liệu từ máy chủ" });
-  //     }
-  //   } catch (error) {
-  //     res.status(500).send("Lỗi máy chủ: " + error.message);
-  //   }
-  // },
+  async searchHotels(req, res) {
+    try {
+      const searchText = req.query.name;
+      if (!searchText) {
+        res.status(404).json({ message: "Query là một object có key là name" });
+      }
+      const hotels = await Hotels.find({ $text: { $search: searchText } });
+      if (!hotels || hotels.length === 0) {
+        return res
+          .status(404)
+          .json({
+            message: `Không có khách sạn nào khớp với từ cần tìm "${searchText}"`,
+          });
+      }
+    } catch (error) {
+      res.status(500).send("Lỗi máy chủ: " + error.message);
+    }
+  },
 
   async deleteHotel(req, res) {
     try {
