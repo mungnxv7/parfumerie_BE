@@ -5,20 +5,26 @@ import Hotels from "../models/hotelsModel.js";
 import { hotelValidate } from "../validation/hotelValidate.js";
 
 const hotelsController = {
-  async getAllHotels(req, res) {
+  async getListHotels(req, res) {
     try {
       const {
         page = 1,
         limit = "5",
         sort = "createdAt",
         order = "asc",
+        search = "",
       } = req.query;
       const option = {
         page: page,
         limit: limit,
         sort: { [sort]: order === "asc" ? 1 : -1 },
       };
-      const hotels = await Hotels.paginate({}, option);
+      const hotels = await Hotels.paginate(
+        {
+          hotelName: { $regex: search, $options: "i" },
+        },
+        option
+      );
       if (hotels.docs) {
         return res.status(200).json(hotels);
       } else {
@@ -41,21 +47,17 @@ const hotelsController = {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
-
-  async searchHotels(req, res) {
+  async getHotelByCategories(req, res) {
     try {
-      const searchText = req.query.name;
-      if (!searchText) {
-        res.status(404).json({ message: "Query là một object có key là name" });
+      const listCategories = req.query.category;
+      if (!listCategories) {
+        return res.status(400).json({ message: "Giá trị có key là category" });
       }
-      const hotels = await Hotels.find({ $text: { $search: searchText } });
-      if (!hotels || hotels.length === 0) {
-        return res
-          .status(404)
-          .json({
-            message: `Không có khách sạn nào khớp với từ cần tìm "${searchText}"`,
-          });
+      const hotels = await Hotels.find({ hotelType: { $in: listCategories } });
+      if (!hotels) {
+        return res.status(400).json({ message: "Không có sản phẩm nào khớp" });
       }
+      res.status(200).json(hotels);
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
