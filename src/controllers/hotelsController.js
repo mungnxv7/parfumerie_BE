@@ -13,18 +13,21 @@ const hotelsController = {
         sort = "createdAt",
         order = "asc",
         search = "",
+        filter = "",
       } = req.query;
+
       const option = {
         page: page,
         limit: limit,
         sort: { [sort]: order === "asc" ? 1 : -1 },
       };
-      const hotels = await Hotels.paginate(
-        {
-          hotelName: { $regex: search, $options: "i" },
-        },
-        option
-      );
+      const listCategory = filter.split(",");
+      let query = { hotelName: { $regex: search, $options: "i" } };
+
+      if (filter != "") {
+        query.hotelType = listCategory;
+      }
+      const hotels = await Hotels.paginate(query, option);
       if (hotels.docs) {
         return res.status(200).json(hotels);
       } else {
@@ -43,21 +46,6 @@ const hotelsController = {
       } else {
         res.status(404).json({ message: "Lỗi lấy dữ liệu từ máy chủ" });
       }
-    } catch (error) {
-      res.status(500).send("Lỗi máy chủ: " + error.message);
-    }
-  },
-  async getHotelByCategories(req, res) {
-    try {
-      const listCategories = req.query.category;
-      if (!listCategories) {
-        return res.status(400).json({ message: "Giá trị có key là category" });
-      }
-      const hotels = await Hotels.find({ hotelType: { $in: listCategories } });
-      if (!hotels) {
-        return res.status(400).json({ message: "Không có sản phẩm nào khớp" });
-      }
-      res.status(200).json(hotels);
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
