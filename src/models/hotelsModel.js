@@ -18,6 +18,7 @@ const hotelsModel = new Schema(
     slug: { type: String },
     hotelImage: {
       path: { type: String, required: true },
+      filename: { type: String, required: true },
     },
     ranking: { type: Number, required: true },
 

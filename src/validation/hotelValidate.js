@@ -27,6 +27,9 @@ export const hotelValidate = Joi.object({
     path: Joi.string().required().messages({
       "string.empty": "Ảnh không được bỏ trống !",
     }),
+    filename: Joi.string().required().messages({
+      "string.empty": "Ảnh không được bỏ trống !",
+    }),
   },
   descreiptionHotel: Joi.string().required().messages({
     "string.empty": "Mô tả không dược bỏ trống !",
