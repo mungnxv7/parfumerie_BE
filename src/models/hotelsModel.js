@@ -7,7 +7,7 @@ const hotelsModel = new Schema(
     hotelName: { type: String, required: true },
     hotelType: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "categories",
+      ref: "Categories",
     },
     address: {
       province: { type: Number, required: true },

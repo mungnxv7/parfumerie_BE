@@ -28,14 +28,34 @@ const hotelsController = {
         query.hotelType = listCategory;
       }
       const hotels = await Hotels.paginate(query, option);
-      if (hotels.docs) {
-        return res.status(200).json(hotels);
+      if (hotels.docs.length > 0) {
+        // Lấy mảng các ID của các khách sạn từ kết quả paginate
+        const hotelIds = hotels.docs.map((hotel) => hotel._id);
+        const detailedHotels = await Hotels.find({
+          _id: { $in: hotelIds },
+        }).populate("hotelType");
+        return res.status(200).json({ docs: detailedHotels, ...hotels });
       } else {
         return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
       }
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
+  },
+
+  async changeSearch(req, res) {
+    try {
+      const search = req.query.name;
+      const hotels = await Hotels.find({
+        hotelName: { $regex: search, $options: "i" },
+      }).populate("hotelType");
+      if (hotels.length == 0 || !hotels) {
+        return res
+          .status(404)
+          .json({ message: "Không tìm thấy khách sạn nào" });
+      }
+      res.status(200).json(hotels);
+    } catch (error) {}
   },
   async getHotelDetail(req, res) {
     try {

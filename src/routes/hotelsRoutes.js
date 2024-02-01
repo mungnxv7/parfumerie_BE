@@ -7,6 +7,7 @@ import hotelsController from "../controllers/hotelsController.js";
 // post products/ add
 const routesHotels = express.Router();
 routesHotels.get("/", hotelsController.getListHotels);
+routesHotels.get("/search", hotelsController.changeSearch);
 routesHotels.post("/", checkPermissionUser, hotelsController.postHotel);
 // upload.single("image"),
 routesHotels.get("/:id", hotelsController.getHotelDetail);
