@@ -1,42 +1,40 @@
 import slugify from "slugify";
-import Category from "../models/categoryModel.js";
-import categoryValidate from "../validation/categoryValidate.js";
-const categoryController = {
-  async getAllCategories(req, res) {
+import Brands from "../models/brandModel.js";
+import brandValidate from "../validation/brandValidate.js";
+const brandController = {
+  async getAllBrands(req, res) {
     try {
-      const result = await Category.find();
-      res.json(result.map((item) => item.toObject()));
+      const result = await Brands.find();
+      res.status(200).json(result.map((item) => item.toObject()));
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
-  async getDetail(req, res) {
+  async getDetailBrand(req, res) {
     try {
-      const { id } = req.params;
-      const result = await Category.findOne({ _id: id });
+      const { slug } = req.params;
+      const result = await Brands.findOne({ slug: slug });
       res.json(result);
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
-  async addCategory(req, res) {
+  async addBrand(req, res) {
     try {
       const data = req.body;
-      const { error } = categoryValidate.validate(data);
+      const { error } = brandValidate.validate(data);
       if (error) {
         res.status(400).json({ message: error.message });
         return;
       }
-      const categoriesExists = await Category.findOne({
-        nameCategories: data.nameCategories,
-      });
-      if (categoriesExists) {
+      const brandExists = await Brands.findOne({ nameBrand: data.nameBrand });
+      if (brandExists) {
         return res.status(400).json({ message: "Khách sạn đã tồn tại" });
       }
-      const slug = slugify(data.nameCategories, { lower: true });
-      const result = await Category.create({ ...data, slug: slug });
+      const slug = slugify(data.nameBrand, { lower: true });
+      const result = await Brands.create({ ...data, slug: slug });
       res
         .status(200)
         .json({ message: "Thêm danh mục thành công", data: result });
@@ -44,35 +42,35 @@ const categoryController = {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
-  async updateCategory(req, res) {
+  async updateBrand(req, res) {
     try {
       const { id } = req.params;
       const data = req.body;
-      const { error } = categoryValidate.validate(data);
+      const { error } = brandValidate.validate(data);
       if (error) {
         res.status(400).json({ message: error.message });
         return;
       }
-      const categoriesExists = await Category.find({
-        nameCategories: data.nameCategories,
+      const categoriesExists = await Brands.find({
+        nameBrand: data.nameBrand,
         _id: { $ne: id },
       });
       if (categoriesExists != "") {
         return res.status(400).json({ message: "Khách sạn đã tồn tại" });
       }
-      const slug = slugify(data.nameCategories, { lower: true });
-      await Category.updateOne({ _id: id }, { ...data, slug: slug });
+      const slug = slugify(data.nameBrand, { lower: true });
+      await Brands.updateOne({ _id: id }, { ...data, slug: slug });
       res.status(200).json({ message: "Cập nhật thành công" });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 
-  async deleteCategory(req, res) {
+  async deleteBrand(req, res) {
     try {
       const { id } = req.params;
       if (id) {
-        await Category.deleteOne({ _id: id });
+        await Brands.deleteOne({ _id: id });
         res.status(200).json({ message: "Xóa thành công" });
       }
     } catch (error) {
@@ -81,4 +79,4 @@ const categoryController = {
   },
 };
 
-export default categoryController;
+export default brandController;
