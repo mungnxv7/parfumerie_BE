@@ -4,9 +4,9 @@ import dotenv from "dotenv";
 import connect from "./src/config/config_db.js";
 import routesUser from "./src/routes/userRoutes.js";
 import routesCategory from "./src/routes/categoryRoutes.js";
-import routesHotels from "./src/routes/hotelsRoutes.js";
 import routesUpload from "./src/routes/upLoad.js";
 import brandRoutes from "./src/routes/brandRoutes.js";
+import routesProducts from "./src/routes/productRoutes.js";
 const app = express();
 
 dotenv.config();
@@ -19,7 +19,7 @@ app.use(
 );
 app.use(cors());
 app.use(express.json());
-app.use("/hotels", routesHotels);
+app.use("/products", routesProducts);
 app.use("/auth", routesUser);
 app.use("/categories", routesCategory);
 app.use("/brands", brandRoutes);

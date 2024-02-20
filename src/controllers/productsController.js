@@ -1,11 +1,10 @@
 import slugify from "slugify";
 import cloudinary from "../config/cloudinaryConfig.js";
+import { productValidate } from "../validation/productValidate.js";
+import Products from "../models/productsModel.js";
 
-import Hotels from "../models/hotelsModel.js";
-import { hotelValidate } from "../validation/hotelValidate.js";
-
-const hotelsController = {
-  async getListHotels(req, res) {
+const productsController = {
+  async getListProducts(req, res) {
     try {
       const {
         page = 1,
@@ -22,19 +21,19 @@ const hotelsController = {
         sort: { [sort]: order === "asc" ? 1 : -1 },
       };
       const listCategory = filter.split(",");
-      let query = { hotelName: { $regex: search, $options: "i" } };
+      let query = { title: { $regex: search, $options: "i" } };
 
       if (filter != "") {
-        query.hotelType = listCategory;
+        query.productType = listCategory;
       }
-      const hotels = await Hotels.paginate(query, option);
-      if (hotels.docs.length > 0) {
+      const products = await Products.paginate(query, option);
+      if (products.docs.length > 0) {
         // Lấy mảng các ID của các khách sạn từ kết quả paginate
-        const hotelIds = hotels.docs.map((hotel) => hotel._id);
-        const detailedHotels = await Hotels.find({
+        const hotelIds = products.docs.map((hotel) => hotel._id);
+        const detailProducts = await Products.find({
           _id: { $in: hotelIds },
         }).populate("hotelType");
-        return res.status(200).json({ docs: detailedHotels, ...hotels });
+        return res.status(200).json({ docs: detailProducts, ...products });
       } else {
         return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
       }
@@ -46,23 +45,23 @@ const hotelsController = {
   async changeSearch(req, res) {
     try {
       const search = req.query.name;
-      const hotels = await Hotels.find({
-        hotelName: { $regex: search, $options: "i" },
+      const products = await Products.find({
+        title: { $regex: search, $options: "i" },
       }).populate("hotelType");
-      if (hotels.length == 0 || !hotels) {
+      if (products.length == 0 || !products) {
         return res
           .status(404)
           .json({ message: "Không tìm thấy khách sạn nào" });
       }
-      res.status(200).json(hotels);
+      res.status(200).json(products);
     } catch (error) {}
   },
-  async getHotelDetail(req, res) {
+  async getProductDetail(req, res) {
     try {
       const { id } = req.params;
-      const hotel = await Hotels.findOne({ _id: id });
-      if (hotel) {
-        res.status(200).json(hotel);
+      const products = await Products.findOne({ _id: id });
+      if (products) {
+        res.status(200).json(products);
       } else {
         res.status(404).json({ message: "Lỗi lấy dữ liệu từ máy chủ" });
       }
@@ -71,13 +70,13 @@ const hotelsController = {
     }
   },
 
-  async deleteHotel(req, res) {
+  async deleteProducts(req, res) {
     try {
       const { id } = req.params;
       if (id) {
         // const product = await Hotels.findOne({ _id: id });
         // await cloudinary.uploader.destroy(product.image.filename);
-        await Hotels.deleteOne({ _id: id });
+        await Products.deleteOne({ _id: id });
         res.status(200).json({ message: "Xóa sản phẩm thành công" });
       }
     } catch (error) {
@@ -85,14 +84,14 @@ const hotelsController = {
     }
   },
 
-  async postHotel(req, res) {
+  async createProducts(req, res) {
     try {
       const data = req.body;
       // const data = {
       //   ...req.body,
       //   image: { filename: req.file.filename, path: req.file.path },
       // };
-      const { error } = hotelValidate.validate(data);
+      const { error } = productValidate.validate(data);
       if (error) {
         // if (req.file) {
         //   await cloudinary.uploader.destroy(req.file.filename);
@@ -105,15 +104,13 @@ const hotelsController = {
         return;
       }
 
-      const hotelExists = await Hotels.findOne({ hotelName: data.hotelName });
-      if (hotelExists) {
-        return res
-          .status(400)
-          .json({ message: "Khách sạn đã tồn tại", hotelExists });
+      const productsExists = await Products.findOne({ title: data.title });
+      if (productsExists) {
+        return res.status(400).json({ message: "Khách sạn đã tồn tại" });
       }
 
-      const slug = slugify(data.hotelName, { lower: true });
-      const result = await Hotels.create({ ...data, slug: slug });
+      const slug = slugify(data.title, { lower: true });
+      const result = await Products.create({ ...data, slug: slug });
       res
         .status(200)
         .json({ message: "Thêm sản phẩm thành công", data: result._doc });
@@ -122,7 +119,7 @@ const hotelsController = {
     }
   },
 
-  async putHotel(req, res) {
+  async updateProduct(req, res) {
     try {
       const { id } = req.params;
 
@@ -137,7 +134,7 @@ const hotelsController = {
       // } else {
       //   data = req.body;
       // }
-      const { error } = hotelValidate.validate(data);
+      const { error } = productValidate.validate(data);
       if (error) {
         let messageError = [];
         error.details.map((messError) => {
@@ -146,20 +143,20 @@ const hotelsController = {
         });
         return;
       }
-      const hotelExists = await Hotels.find({
-        hotelName: data.hotelName,
+      const productsExists = await Products.find({
+        title: data.title,
         _id: { $ne: id },
       });
-      if (hotelExists != "") {
+      if (productsExists != "") {
         return res.status(400).json({ message: "Khách sạn đã tồn tại" });
       }
       data.slug = slugify(data.hotelName, { lower: true });
       res.json(data);
-      await Hotels.updateOne({ _id: id }, data);
+      await Products.updateOne({ _id: id }, data);
       res.status(200).json({ message: "Cập nhật sản phẩm thành công" });
     } catch (error) {
       res.status(500).send("Lỗi máy chủ: " + error.message);
     }
   },
 };
-export default hotelsController;
+export default productsController;
