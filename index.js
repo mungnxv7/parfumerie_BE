@@ -13,9 +13,9 @@ dotenv.config();
 
 const { API_SERVER, PORT } = process.env;
 app.use(
-  express.urlencoded({
-    extended: true,
-  })
+    express.urlencoded({
+        extended: true,
+    })
 );
 app.use(cors());
 app.use(express.json());
@@ -25,6 +25,8 @@ app.use("/categories", routesCategory);
 app.use("/brands", brandRoutes);
 app.use("/upload", routesUpload);
 connect(API_SERVER);
+
+// test case pc
 app.listen(PORT, () => {
-  console.log(`Server is running on port http://localhost:${PORT}`);
+    console.log(`Server is running on port http://localhost:${PORT}`);
 });
